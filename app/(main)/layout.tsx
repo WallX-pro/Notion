@@ -1,0 +1,39 @@
+"use client";
+
+import { useEffect } from "react";
+import { Spinner } from "@/components/spinner";
+import { useConvexAuth } from "convex/react";
+import { redirect } from "next/navigation";
+import Navigation from "./_components/Navigation";
+import { SearchCommand } from "@/components/search-command";
+
+const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
+  useEffect(() => {
+    import("@/components/editor");
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="dark:bg-dark flex h-full items-center justify-center">
+        <Spinner size="md" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return redirect("/");
+  }
+
+  return (
+    <div className="dark:bg-dark flex h-full">
+      <Navigation />
+      <main className="h-full flex-1 overflow-y-auto">
+        <SearchCommand />
+        {children}
+      </main>
+    </div>
+  );
+};
+export default MainLayout;
